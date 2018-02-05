@@ -56,6 +56,7 @@ class ut_someip(unittest.TestCase):
     self.assertTrue(binascii.hexlify(str(p)) == "11112222")
 
   def _test_02_SOMEIP(self):
+    """ test SOMEIP packet : overall, payload and length."""
     p = someip.SOMEIP()
 
     # overall package (with default values)
@@ -75,6 +76,7 @@ class ut_someip(unittest.TestCase):
     self.assertTrue(pstr == binstr)
 
   def _test_03_SOMEIP_SubPackages(self):
+    """ test SOMEIP packet : MessageId and RequestId subpackages."""
     p = someip.SOMEIP()
 
     # MessageId subpackage
@@ -103,6 +105,7 @@ class ut_someip(unittest.TestCase):
     self.assertTrue(pstr == binstr)
 
   def test_04_SOMEIP_Fields(self):
+    """ test SOMEIP packet : defaults."""
     p = someip.SOMEIP()
 
     # default values
