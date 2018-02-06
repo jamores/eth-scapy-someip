@@ -10,89 +10,10 @@ import ctypes
 class SD(Packet):
   pass
 
-## SD ENTRY
-##  - Service
-##  - EventGroup
-class _SDEntry_Header(Packet):
-  """ Common header fields among ServiceEntry and EventGroupEntry."""
-  fields_desc = [ 
-    ByteField("type",0),
-    ByteField("index_1",0),
-    ByteField("index_2",0),
-    BitField("n_opt_1",0,4), # warning : 4bits field
-    BitField("n_opt_2",0,4), # warning : 4bits field
-    ShortField("srv_id",0),
-    ShortField("instance_id",0),
-    ByteField("major_ver",0),
-    X3BytesField("ttl",0)]
-class _SDEntry(Packet):
-  """ Base class for SDEntry_* packages."""
-  TYPE_FMT = ">B"
-  TYPE_PAYLOAD_I=0
-  # ENTRY TYPES : SERVICE
-  TYPE_SRV_FINDSERVICE        = 0x00
-  TYPE_SRV_OFFERSERVICE       = 0x01
-  TYPE_SRV = (TYPE_SRV_FINDSERVICE,TYPE_SRV_OFFERSERVICE)
-  # ENTRY TYPES : EVENGROUP
-  TYPE_EVTGRP_SUBSCRIBE       = 0x06
-  TYPE_EVTGRP_SUBSCRIBE_ACK   = 0x07
-  TYPE_EVTGRP = (TYPE_EVTGRP_SUBSCRIBE,TYPE_EVTGRP_SUBSCRIBE_ACK)
-  # overall len (UT usage)
-  OVERALL_LEN = 16
-
-  def guess_payload_class(self,payload):
-    """ decode SDEntry depending on its type."""
-    # TODO : initial implementation, to be reviewed for multiple entries
-    pl_type = struct.unpack(SDEntry.TYPE_FMT,payload[SDEntry.TYPE_PAYLOAD_I])[0]
-    if(pl_type in SDEntry.TYPE_SRV):
-      return(SDEntry_Service)
-    elif(pl_type in SDEntry.TYPE_EVTGRP):
-      return(SDEntry_Eventgroup)
-
-class SDEntry_Service(_SDEntry):
-  fields_desc = [ 
-    _SDEntry_Header,
-    IntField("minor_ver",0)]
-class SDEntry_Eventgroup(_SDEntry):
-  fields_desc = [ 
-    _SDEntry_Header,
-    BitField("res",0,12),
-    BitField("cnt",0,4),
-    ShortField("eventgroup_id",0)]
-
-## SD Option
-##  - Configuration
-##  - LoadBalancing
-##  - IPv4 EndPoint
-##  - IPv6 EndPoint
-##  - IPv4 MultiCast
-##  - IPv6 MultiCast
-##  - IPv4 EndPoint
-##  - IPv6 EndPoint
-class _SDOption(Packet):
-  """ Base class for SDOption_* packages."""
-  SDOPTION_CFG_TYPE                 = 0x01
-  SDOPTION_CFG_OVERALL_LEN          = 4       # overall length of CFG SDOption,empty 'cfg_str' (to be used from UT)
-  SDOPTION_LOADBALANCE_TYPE         = 0x02
-  SDOPTION_LOADBALANCE_LEN          = 0x05
-  SDOPTION_LOADBALANCE_OVERALL_LEN  = 8       # overall length of LB SDOption (to be used from UT)
-  SDOPTION_IP4_ENDPOINT_TYPE        = 0x04
-  SDOPTION_IP4_ENDPOINT_LEN         = 0x0009
-  SDOPTION_IP4_MCAST_TYPE           = 0x14
-  SDOPTION_IP4_MCAST_LEN            = 0x0009
-  SDOPTION_IP4_SDENDPOINT_TYPE      = 0x24
-  SDOPTION_IP4_SDENDPOINT_LEN       = 0x0009
-  SDOPTION_IP4_OVERALL_LEN          = 12      # overall length of IP4 SDOption (to be used from UT)
-  SDOPTION_IP6_ENDPOINT_TYPE        = 0x06
-  SDOPTION_IP6_ENDPOINT_LEN         = 0x0015
-  SDOPTION_IP6_MCAST_TYPE           = 0x16
-  SDOPTION_IP6_MCAST_LEN            = 0x0015
-  SDOPTION_IP6_SDENDPOINT_TYPE      = 0x26
-  SDOPTION_IP6_SDENDPOINT_LEN       = 0x0015
-  SDOPTION_IP6_OVERALL_LEN          = 24      # overall length of IP6 SDOption (to be used from UT)
-
- 
-  # use this dictionary to set default values for desired fields
+class _SDPacketBase(Packet):
+  """ base class to be used among all SD Packet definitions."""
+  # use this dictionary to set default values for desired fields (mostly on subclasses
+  # where not all fields are defined locally)
   # - key : field_name, value : desired value
   # - it will be used from 'init_fields' function, upon packet initialization
   #
@@ -116,8 +37,97 @@ class _SDOption(Packet):
       Packet.init_fields(self)
       self._set_defaults()
 
+
+## SD ENTRY
+##  - Service
+##  - EventGroup
+class _SDEntry(_SDPacketBase):
+  """ Base class for SDEntry_* packages."""
+  TYPE_FMT = ">B"
+  TYPE_PAYLOAD_I=0
+  # ENTRY TYPES : SERVICE
+  TYPE_SRV_FINDSERVICE        = 0x00
+  TYPE_SRV_OFFERSERVICE       = 0x01
+  TYPE_SRV = (TYPE_SRV_FINDSERVICE,TYPE_SRV_OFFERSERVICE)
+  # ENTRY TYPES : EVENGROUP
+  TYPE_EVTGRP_SUBSCRIBE       = 0x06
+  TYPE_EVTGRP_SUBSCRIBE_ACK   = 0x07
+  TYPE_EVTGRP = (TYPE_EVTGRP_SUBSCRIBE,TYPE_EVTGRP_SUBSCRIBE_ACK)
+  # overall len (UT usage)
+  OVERALL_LEN = 16
+
+  fields_desc = [ 
+    ByteField("type",0),
+    ByteField("index_1",0),
+    ByteField("index_2",0),
+    BitField("n_opt_1",0,4),
+    BitField("n_opt_2",0,4),
+    ShortField("srv_id",0),
+    ShortField("inst_id",0),
+    ByteField("major_ver",0),
+    X3BytesField("ttl",0)]
+
   def guess_payload_class(self,payload):
-      """ decode SDEntry depending on its type."""
+    """ decode SDEntry depending on its type."""
+    # TODO : initial implementation, to be reviewed for multiple entries
+    pl_type = struct.unpack(_SDEntry.TYPE_FMT,payload[_SDEntry.TYPE_PAYLOAD_I])[0]
+    if(pl_type in _SDEntry.TYPE_SRV):
+      return(SDEntry_Service)
+    elif(pl_type in _SDEntry.TYPE_EVTGRP):
+      return(SDEntry_EventGroup)
+
+class SDEntry_Service(_SDEntry):
+  """ Service Entry."""
+  _defaults = {"type":_SDEntry.TYPE_SRV_FINDSERVICE}
+
+  name = "Service Entry"
+  fields_desc = [ 
+    _SDEntry,
+    IntField("minor_ver",0)]
+class SDEntry_EventGroup(_SDEntry):
+  """ EventGroup Entry."""
+  _defaults = {"type":_SDEntry.TYPE_EVTGRP_SUBSCRIBE}
+
+  name = "Eventgroup Entry"
+  fields_desc = [ 
+    _SDEntry,
+    BitField("res",0,12),
+    BitField("cnt",0,4),
+    ShortField("eventgroup_id",0)]
+
+## SD Option
+##  - Configuration
+##  - LoadBalancing
+##  - IPv4 EndPoint
+##  - IPv6 EndPoint
+##  - IPv4 MultiCast
+##  - IPv6 MultiCast
+##  - IPv4 EndPoint
+##  - IPv6 EndPoint
+class _SDOption(_SDPacketBase):
+  """ Base class for SDOption_* packages."""
+  SDOPTION_CFG_TYPE                 = 0x01
+  SDOPTION_CFG_OVERALL_LEN          = 4       # overall length of CFG SDOption,empty 'cfg_str' (to be used from UT)
+  SDOPTION_LOADBALANCE_TYPE         = 0x02
+  SDOPTION_LOADBALANCE_LEN          = 0x05
+  SDOPTION_LOADBALANCE_OVERALL_LEN  = 8       # overall length of LB SDOption (to be used from UT)
+  SDOPTION_IP4_ENDPOINT_TYPE        = 0x04
+  SDOPTION_IP4_ENDPOINT_LEN         = 0x0009
+  SDOPTION_IP4_MCAST_TYPE           = 0x14
+  SDOPTION_IP4_MCAST_LEN            = 0x0009
+  SDOPTION_IP4_SDENDPOINT_TYPE      = 0x24
+  SDOPTION_IP4_SDENDPOINT_LEN       = 0x0009
+  SDOPTION_IP4_OVERALL_LEN          = 12      # overall length of IP4 SDOption (to be used from UT)
+  SDOPTION_IP6_ENDPOINT_TYPE        = 0x06
+  SDOPTION_IP6_ENDPOINT_LEN         = 0x0015
+  SDOPTION_IP6_MCAST_TYPE           = 0x16
+  SDOPTION_IP6_MCAST_LEN            = 0x0015
+  SDOPTION_IP6_SDENDPOINT_TYPE      = 0x26
+  SDOPTION_IP6_SDENDPOINT_LEN       = 0x0015
+  SDOPTION_IP6_OVERALL_LEN          = 24      # overall length of IP6 SDOption (to be used from UT)
+
+  def guess_payload_class(self,payload):
+      """ decode SDOption depending on its type."""
       # TODO : initial implementation, to be reviewed for multiple options
       pl_type = struct.unpack(">B",payload[2])[0]
       

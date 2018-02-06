@@ -9,7 +9,7 @@ import ctypes
 ##
 
 class _SOMEIP_MessageId(Packet):
-  """ DESCRIPTION HERE."""
+  """ MessageId subpacket."""
   name = "MessageId"
   fields_desc = [ 
     ShortField("srv_id",0),
@@ -21,7 +21,7 @@ class _SOMEIP_MessageId(Packet):
     return "",p
 
 class _SOMEIP_RequestId(Packet):
-  """ DESCRIPTION HERE."""
+  """ RequestId subpacket."""
   name = "RequestId"
   fields_desc = [ 
     ShortField("client_id",0),
@@ -30,6 +30,7 @@ class _SOMEIP_RequestId(Packet):
       return "",p
 
 class SOMEIP(Packet):
+  """ SOME/IP Packet."""
   # Default values
   PROTOCOL_VERSION  = 0x01
   INTERFACE_VERSION = 0x01
