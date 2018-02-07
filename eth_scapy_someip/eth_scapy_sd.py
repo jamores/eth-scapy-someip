@@ -8,7 +8,43 @@ import ctypes
 ## SD PACKAGE DEFINITION
 ##
 class SD(Packet):
-  pass
+  MSGID_SRV_ID = 0xffff
+  MSGID_SUB_ID = 0x1
+  MSGID_EVT_ID = 0x100
+  PROTO_VER = 0x01
+  IFACE_VER = 0x01
+  MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
+
+  # TODO : improve 'flags' field
+  # Flags definition: {"name":(mask,offset)}
+  FLAGSDEF = {
+    "RB":(0x80,7),   # ReBoot flag
+    "UC":(0x40,6)    # UniCast flag
+    }
+
+  name = "SD"
+  fields_desc = [
+    ByteField("flags",0),
+    X3BytesField("res",0),
+    FieldLenField("len_entry_array",None,length_of="entry_array",fmt="!I"),
+    PacketListField("entry_array",[],SDEntry,length_from = lambda pkt:pkt.len_entry_array),
+    FieldLenField("len_option_array",None,length_of="option_array",fmt="!I"),
+    PacketListField("option_array",[],_SDOption,length_from = lambda pkt:pkt.len_option_array)]
+
+  # NOTE : when adding 'entries' or 'options', do not use list.append() method but create a new list
+  # ej :  p = SD()
+  #       p.option_array = [SDOption_Config(),SDOption_IP6_EndPoint()]
+
+  def getFlag(self,name):
+      name = name.upper()
+      if(name in self.FLAGSDEF):
+          return((self.flags&self.FLAGSDEF[name][0])>>self.FLAGSDEF[name][1])
+      else:return None
+  def setFlag(self,name,value):
+      name = name.upper()
+      if(name in self.FLAGSDEF):
+          self.flags = (self.flags&(ctypes.c_ubyte(~self.FLAGSDEF[name][0]).value))|((value&0x01)<<self.FLAGSDEF[name][1])
+
 
 class _SDPacketBase(Packet):
   """ base class to be used among all SD Packet definitions."""
