@@ -80,12 +80,26 @@ class ut_sd(unittest.TestCase):
   def test_02_SDOption_Config(self):
     p = sd.SDOption_Config()
 
+    # pkg type
+    self.assertTrue(p.type == sd._SDOption.CFG_TYPE)
+    # length without payload
+    self.assertTrue(len(binascii.hexlify(str(p)))/2 == sd._SDOption.CFG_OVERALL_LEN)
+
+    # add payload and check length
+    p.cfg_str = "5abc=x7def=1230"
+    self.assertTrue(binascii.hexlify(str(p)) == "00100100"+binascii.hexlify("5abc=x7def=1230"))
+
     # Payload guess
     p_option = sd._SDOption()
     self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_Config)
 
   def test_03_SDOption_LoadBalance(self):
     p = sd.SDOption_LoadBalance()
+
+    # pkg type & lengths (static and overall)
+    self.assertTrue(p.type == sd._SDOption.LOADBALANCE_TYPE)
+    self.assertTrue(p.len == sd._SDOption.LOADBALANCE_LEN)
+    self.assertTrue(len(binascii.hexlify(str(p)))/2 == sd._SDOption.LOADBALANCE_OVERALL_LEN)
 
     # Payload guess
     p_option = sd._SDOption()
@@ -94,12 +108,20 @@ class ut_sd(unittest.TestCase):
   def test_04_SDOption_IP4_EndPoint(self):
     p = sd.SDOption_IP4_EndPoint()
 
+    # pkg type & length
+    self.assertTrue(p.type == sd._SDOption.IP4_ENDPOINT_TYPE)
+    self.assertTrue(p.len == sd._SDOption.IP4_ENDPOINT_LEN)
+
     # Payload guess
     p_option = sd._SDOption()
     self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP4_EndPoint)
 
   def test_05_SDOption_IP4_Multicast(self):
     p = sd.SDOption_IP4_Multicast()
+
+    # pkg type & length
+    self.assertTrue(p.type == sd._SDOption.IP4_MCAST_TYPE)
+    self.assertTrue(p.len == sd._SDOption.IP4_MCAST_LEN)
 
     # Payload guess
     p_option = sd._SDOption()
@@ -108,12 +130,20 @@ class ut_sd(unittest.TestCase):
   def test_06_SDOption_IP4_SD_EndPoint(self):
     p = sd.SDOption_IP4_SD_EndPoint()
 
+    # pkg type & length
+    self.assertTrue(p.type == sd._SDOption.IP4_SDENDPOINT_TYPE)
+    self.assertTrue(p.len == sd._SDOption.IP4_SDENDPOINT_LEN)
+
     # Payload guess
     p_option = sd._SDOption()
     self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP4_SD_EndPoint)
 
   def test_07_SDOption_IP6_EndPoint(self):
     p = sd.SDOption_IP6_EndPoint()
+
+    # pkg type & length
+    self.assertTrue(p.type == sd._SDOption.IP6_ENDPOINT_TYPE)
+    self.assertTrue(p.len == sd._SDOption.IP6_ENDPOINT_LEN)
 
     # Payload guess
     p_option = sd._SDOption()
@@ -122,12 +152,20 @@ class ut_sd(unittest.TestCase):
   def test_08_SDOption_IP6_Multicast(self):
     p = sd.SDOption_IP6_Multicast()
 
+    # pkg type & length
+    self.assertTrue(p.type == sd._SDOption.IP6_MCAST_TYPE)
+    self.assertTrue(p.len == sd._SDOption.IP6_MCAST_LEN)
+
     # Payload guess
     p_option = sd._SDOption()
     self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP6_Multicast)
 
   def test_09_SDOption_IP6_SD_EndPoint(self):
     p = sd.SDOption_IP6_SD_EndPoint()
+
+    # pkg type & length
+    self.assertTrue(p.type == sd._SDOption.IP6_SDENDPOINT_TYPE)
+    self.assertTrue(p.len == sd._SDOption.IP6_SDENDPOINT_LEN)
 
     # Payload guess
     p_option = sd._SDOption()

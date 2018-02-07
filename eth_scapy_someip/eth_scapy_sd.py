@@ -175,13 +175,12 @@ class SDOption_Config(_SDOption):
     # default values specification
     _defaults = {'type':_SDOption.CFG_TYPE}
     # package fields definiton
-    # TODO : add explicit control of "\0 terminated string"
     fields_desc = [
       _SDOption_Header,
       StrField("cfg_str","")]
 
     def post_build(self,p,pay):
-      # length computation excluding 16b_length and 8b_flags
+      # length computation excluding 16b_length and 8b_type
       l = self.len
       if(l is None):
         l = len(self.cfg_str)+self.LEN_OFFSET
@@ -195,7 +194,7 @@ class SDOption_LoadBalance(_SDOption):
     # package fields definiton
     fields_desc = [ 
       _SDOption_Header,
-      ShortField("prio",0),
+      ShortField("priority",0),
       ShortField("weight",0)]
 
 # SDOPTIONS : IPv4-specific 
