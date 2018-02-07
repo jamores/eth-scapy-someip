@@ -69,7 +69,6 @@ class _SDEntry(_SDPacketBase):
 
   def guess_payload_class(self,payload):
     """ decode SDEntry depending on its type."""
-    # TODO : initial implementation, to be reviewed for multiple entries
     pl_type = struct.unpack(_SDEntry.TYPE_FMT,payload[_SDEntry.TYPE_PAYLOAD_I])[0]
     if(pl_type in _SDEntry.TYPE_SRV):
       return(SDEntry_Service)
@@ -106,47 +105,47 @@ class SDEntry_EventGroup(_SDEntry):
 ##  - IPv6 EndPoint
 class _SDOption(_SDPacketBase):
   """ Base class for SDOption_* packages."""
-  SDOPTION_CFG_TYPE                 = 0x01
-  SDOPTION_CFG_OVERALL_LEN          = 4       # overall length of CFG SDOption,empty 'cfg_str' (to be used from UT)
-  SDOPTION_LOADBALANCE_TYPE         = 0x02
-  SDOPTION_LOADBALANCE_LEN          = 0x05
-  SDOPTION_LOADBALANCE_OVERALL_LEN  = 8       # overall length of LB SDOption (to be used from UT)
-  SDOPTION_IP4_ENDPOINT_TYPE        = 0x04
-  SDOPTION_IP4_ENDPOINT_LEN         = 0x0009
-  SDOPTION_IP4_MCAST_TYPE           = 0x14
-  SDOPTION_IP4_MCAST_LEN            = 0x0009
-  SDOPTION_IP4_SDENDPOINT_TYPE      = 0x24
-  SDOPTION_IP4_SDENDPOINT_LEN       = 0x0009
-  SDOPTION_IP4_OVERALL_LEN          = 12      # overall length of IP4 SDOption (to be used from UT)
-  SDOPTION_IP6_ENDPOINT_TYPE        = 0x06
-  SDOPTION_IP6_ENDPOINT_LEN         = 0x0015
-  SDOPTION_IP6_MCAST_TYPE           = 0x16
-  SDOPTION_IP6_MCAST_LEN            = 0x0015
-  SDOPTION_IP6_SDENDPOINT_TYPE      = 0x26
-  SDOPTION_IP6_SDENDPOINT_LEN       = 0x0015
-  SDOPTION_IP6_OVERALL_LEN          = 24      # overall length of IP6 SDOption (to be used from UT)
+  CFG_TYPE                 = 0x01
+  CFG_OVERALL_LEN          = 4       # overall length of CFG SDOption,empty 'cfg_str' (to be used from UT)
+  LOADBALANCE_TYPE         = 0x02
+  LOADBALANCE_LEN          = 0x05
+  LOADBALANCE_OVERALL_LEN  = 8       # overall length of LB SDOption (to be used from UT)
+  IP4_ENDPOINT_TYPE        = 0x04
+  IP4_ENDPOINT_LEN         = 0x0009
+  IP4_MCAST_TYPE           = 0x14
+  IP4_MCAST_LEN            = 0x0009
+  IP4_SDENDPOINT_TYPE      = 0x24
+  IP4_SDENDPOINT_LEN       = 0x0009
+  IP4_OVERALL_LEN          = 12      # overall length of IP4 SDOption (to be used from UT)
+  IP6_ENDPOINT_TYPE        = 0x06
+  IP6_ENDPOINT_LEN         = 0x0015
+  IP6_MCAST_TYPE           = 0x16
+  IP6_MCAST_LEN            = 0x0015
+  IP6_SDENDPOINT_TYPE      = 0x26
+  IP6_SDENDPOINT_LEN       = 0x0015
+  IP6_OVERALL_LEN          = 24      # overall length of IP6 SDOption (to be used from UT)
 
   def guess_payload_class(self,payload):
-      """ decode SDOption depending on its type."""
-      # TODO : initial implementation, to be reviewed for multiple options
-      pl_type = struct.unpack(">B",payload[2])[0]
-      
-      if(pl_type == self.SDOPTION_CFG_TYPE):
-        return(SDOption_Config)
-      elif(pl_type == self.SDOPTION_LOADBALANCE_TYPE):
-        return(SDOption_LoadBalance)
-      elif(pl_type == self.SDOPTION_IP4_ENDPOINT_TYPE):
-        return(SDOption_IP4_EndPoint)
-      elif(pl_type == self.SDOPTION_IP4_MCAST_TYPE):
-        return(SDOption_IP4_Multicast)
-      elif(pl_type == self.SDOPTION_IP4_SDENDPOINT_TYPE):
-        return(SDOption_IP4_SD_EndPoint)
-      elif(pl_type == self.SDOPTION_IP6_ENDPOINT_TYPE):
-        return(SDOption_IP6_EndPoint)
-      elif(pl_type == self.SDOPTION_IP6_MCAST_TYPE):
-        return(SDOption_IP6_MultiCast)
-      elif(pl_type == self.SDOPTION_IP6_SDENDPOINT_TYPE):
-        return(SDOption_IP6_SD_EndPoint)
+    """ decode SDOption depending on its type."""
+    # TODO : initial implementation, to be reviewed for multiple options
+    pl_type = struct.unpack(">B",payload[2])[0]
+    
+    if(pl_type == _SDOption.CFG_TYPE):
+      return(SDOption_Config)
+    elif(pl_type == self.LOADBALANCE_TYPE):
+      return(SDOption_LoadBalance)
+    elif(pl_type == self.IP4_ENDPOINT_TYPE):
+      return(SDOption_IP4_EndPoint)
+    elif(pl_type == self.IP4_MCAST_TYPE):
+      return(SDOption_IP4_Multicast)
+    elif(pl_type == self.IP4_SDENDPOINT_TYPE):
+      return(SDOption_IP4_SD_EndPoint)
+    elif(pl_type == self.IP6_ENDPOINT_TYPE):
+      return(SDOption_IP6_EndPoint)
+    elif(pl_type == self.IP6_MCAST_TYPE):
+      return(SDOption_IP6_Multicast)
+    elif(pl_type == self.IP6_SDENDPOINT_TYPE):
+      return(SDOption_IP6_SD_EndPoint)
 
 class _SDOption_Header(_SDOption):
   fields_desc = [ 
@@ -174,7 +173,7 @@ class SDOption_Config(_SDOption):
     LEN_OFFSET    = 0x01
 
     # default values specification
-    _defaults = {'type':_SDOption.SDOPTION_CFG_TYPE}
+    _defaults = {'type':_SDOption.CFG_TYPE}
     # package fields definiton
     # TODO : add explicit control of "\0 terminated string"
     fields_desc = [
@@ -191,8 +190,8 @@ class SDOption_Config(_SDOption):
 
 class SDOption_LoadBalance(_SDOption):
     # default values specification
-    _defaults = { 'type':_SDOption.SDOPTION_LOADBALANCE_TYPE,
-                  'len':_SDOption.SDOPTION_LOADBALANCE_LEN}
+    _defaults = { 'type':_SDOption.LOADBALANCE_TYPE,
+                  'len':_SDOption.LOADBALANCE_LEN}
     # package fields definiton
     fields_desc = [ 
       _SDOption_Header,
@@ -202,26 +201,26 @@ class SDOption_LoadBalance(_SDOption):
 # SDOPTIONS : IPv4-specific 
 class SDOption_IP4_EndPoint(_SDOption_IP4):
   # default values specification
-  _defaults = {'type':_SDOption.SDOPTION_IP4_ENDPOINT_TYPE,'len':_SDOption.SDOPTION_IP4_ENDPOINT_LEN}
+  _defaults = {'type':_SDOption.IP4_ENDPOINT_TYPE,'len':_SDOption.IP4_ENDPOINT_LEN}
 
 class SDOption_IP4_Multicast(_SDOption_IP4):
   # default values specification
-  _defaults = {'type':_SDOption.SDOPTION_IP4_MCAST_TYPE,'len':_SDOption.SDOPTION_IP4_MCAST_LEN}
+  _defaults = {'type':_SDOption.IP4_MCAST_TYPE,'len':_SDOption.IP4_MCAST_LEN}
 
 class SDOption_IP4_SD_EndPoint(_SDOption_IP4):
   # default values specification
-  _defaults = {'type':_SDOption.SDOPTION_IP4_SDENDPOINT_TYPE,'len':_SDOption.SDOPTION_IP4_SDENDPOINT_LEN}
+  _defaults = {'type':_SDOption.IP4_SDENDPOINT_TYPE,'len':_SDOption.IP4_SDENDPOINT_LEN}
 
 # SDOPTIONS : IPv6-specific 
 class SDOption_IP6_EndPoint(_SDOption_IP6):
   # default values specification
-  _defaults = {'type':_SDOption.SDOPTION_IP6_ENDPOINT_TYPE,'len':_SDOption.SDOPTION_IP6_ENDPOINT_LEN}
+  _defaults = {'type':_SDOption.IP6_ENDPOINT_TYPE,'len':_SDOption.IP6_ENDPOINT_LEN}
 
 class SDOption_IP6_Multicast(_SDOption_IP6):
   # default values specification
-  _defaults = {'type':_SDOption.SDOPTION_IP6_MCAST_TYPE,'len':_SDOption.SDOPTION_IP6_MCAST_LEN}
+  _defaults = {'type':_SDOption.IP6_MCAST_TYPE,'len':_SDOption.IP6_MCAST_LEN}
 
 class SDOption_IP6_SD_EndPoint(_SDOption_IP6):
   # default values specification
-  _defaults = {'type':_SDOption.SDOPTION_IP6_SDENDPOINT_TYPE,'len':_SDOption.SDOPTION_IP6_SDENDPOINT_LEN}
+  _defaults = {'type':_SDOption.IP6_SDENDPOINT_TYPE,'len':_SDOption.IP6_SDENDPOINT_LEN}
 

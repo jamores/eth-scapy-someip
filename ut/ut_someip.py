@@ -13,7 +13,7 @@ class ut_someip(unittest.TestCase):
   def tearDown(self):
     pass
 
-  def _test_00_MessageId(self):
+  def test_00_MessageId(self):
     """ test MessageId subpackage."""
     p = someip._SOMEIP_MessageId()
     p.srv_id = 0x1111
@@ -42,7 +42,7 @@ class ut_someip(unittest.TestCase):
     # overall subpackage contents
     self.assertTrue(binascii.hexlify(str(p)) == "11118333")
 
-  def _test_01_RequestId(self):
+  def test_01_RequestId(self):
     """ test RequestId subpackage."""
     p = someip._SOMEIP_RequestId()
     p.client_id = 0x1111
@@ -55,7 +55,7 @@ class ut_someip(unittest.TestCase):
     # overall subpackage contents
     self.assertTrue(binascii.hexlify(str(p)) == "11112222")
 
-  def _test_02_SOMEIP(self):
+  def test_02_SOMEIP(self):
     """ test SOMEIP packet : overall, payload and length."""
     p = someip.SOMEIP()
 
@@ -75,7 +75,7 @@ class ut_someip(unittest.TestCase):
     binstr = "00"*4+"00"*3+"08"+"00"*4+"01010000"
     self.assertTrue(pstr == binstr)
 
-  def _test_03_SOMEIP_SubPackages(self):
+  def test_03_SOMEIP_SubPackages(self):
     """ test SOMEIP packet : MessageId and RequestId subpackages."""
     p = someip.SOMEIP()
 

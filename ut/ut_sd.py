@@ -76,3 +76,59 @@ class ut_sd(unittest.TestCase):
     p_entry_evtgrp = sd.SDEntry_EventGroup()
 
     self.assertTrue(p_entry.guess_payload_class(str(p_entry_evtgrp)) == sd.SDEntry_EventGroup)
+
+  def test_02_SDOption_Config(self):
+    p = sd.SDOption_Config()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_Config)
+
+  def test_03_SDOption_LoadBalance(self):
+    p = sd.SDOption_LoadBalance()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_LoadBalance)
+  
+  def test_04_SDOption_IP4_EndPoint(self):
+    p = sd.SDOption_IP4_EndPoint()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP4_EndPoint)
+
+  def test_05_SDOption_IP4_Multicast(self):
+    p = sd.SDOption_IP4_Multicast()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP4_Multicast)
+
+  def test_06_SDOption_IP4_SD_EndPoint(self):
+    p = sd.SDOption_IP4_SD_EndPoint()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP4_SD_EndPoint)
+
+  def test_07_SDOption_IP6_EndPoint(self):
+    p = sd.SDOption_IP6_EndPoint()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP6_EndPoint)
+
+  def test_08_SDOption_IP6_Multicast(self):
+    p = sd.SDOption_IP6_Multicast()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP6_Multicast)
+
+  def test_09_SDOption_IP6_SD_EndPoint(self):
+    p = sd.SDOption_IP6_SD_EndPoint()
+
+    # Payload guess
+    p_option = sd._SDOption()
+    self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP6_SD_EndPoint)
