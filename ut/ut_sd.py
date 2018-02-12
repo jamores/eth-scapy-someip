@@ -170,3 +170,15 @@ class ut_sd(unittest.TestCase):
     # Payload guess
     p_option = sd._SDOption()
     self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP6_SD_EndPoint)
+
+  def test_0a_SD(self):
+    p = sd.SD()
+
+    p.setFlag("REBOOT",1)
+    self.assertTrue(p.flags == 0x80)
+    p.setFlag("REBOOT",0)
+    self.assertTrue(p.flags == 0x00)
+    p.setFlag("UNICAST",1)
+    self.assertTrue(p.flags == 0x40)
+    p.setFlag("UNICAST",0)
+    self.assertTrue(p.flags == 0x00)

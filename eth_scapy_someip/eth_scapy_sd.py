@@ -3,6 +3,7 @@ from scapy.packet import *
 from scapy.all import *
 from scapy.layers.inet6 import IP6Field
 import ctypes
+import collections
 from eth_scapy_someip import SOMEIP
 
 class _SDPacketBase(Packet):
@@ -221,6 +222,7 @@ class SDOption_IP6_SD_EndPoint(_SDOption_IP6):
 ##
 ## SD PACKAGE DEFINITION
 ##
+_sdFlag = collections.namedtuple('Flag','mask offset')
 class SD(Packet):
   MSGID_SRV_ID = 0xffff
   MSGID_SUB_ID = 0x1
@@ -229,11 +231,10 @@ class SD(Packet):
   IFACE_VER = 0x01
   MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
 
-  # TODO : improve 'flags' field
   # Flags definition: {"name":(mask,offset)}
   FLAGSDEF = {
-    "RB":(0x80,7),   # ReBoot flag
-    "UC":(0x40,6)    # UniCast flag
+    "REBOOT":_sdFlag(mask=0x80,offset=7),   # ReBoot flag
+    "UNICAST":_sdFlag(mask=0x40,offset=6)   # UniCast flag
     }
 
   name = "SD"
@@ -250,12 +251,19 @@ class SD(Packet):
   #       p.option_array = [SDOption_Config(),SDOption_IP6_EndPoint()]
 
   def getFlag(self,name):
-      name = name.upper()
-      if(name in self.FLAGSDEF):
-          return((self.flags&self.FLAGSDEF[name][0])>>self.FLAGSDEF[name][1])
-      else:return None
+    """ get particular flag from bitfield."""
+    name = name.upper()
+    if(name in self.FLAGSDEF):
+        return((self.flags&self.FLAGSDEF[name].mask)>>self.FLAGSDEF[name].offset)
+    else:return None
+
   def setFlag(self,name,value):
-      name = name.upper()
-      if(name in self.FLAGSDEF):
-          self.flags = (self.flags&(ctypes.c_ubyte(~self.FLAGSDEF[name][0]).value))|((value&0x01)<<self.FLAGSDEF[name][1])
+    """ 
+    Set particular flag on bitfield.
+     :param str name : name of the flag to set (see SD.FLAGSDEF)
+     :param int value : either 0x1 or 0x0 (provided int will be ANDed with 0x01)
+    """
+    name = name.upper()
+    if(name in self.FLAGSDEF):
+        self.flags = (self.flags&(ctypes.c_ubyte(~self.FLAGSDEF[name].mask).value))|((value&0x01)<<self.FLAGSDEF[name].offset)
 
