@@ -222,7 +222,6 @@ class SDOption_IP6_SD_EndPoint(_SDOption_IP6):
 ##
 ## SD PACKAGE DEFINITION
 ##
-_sdFlag = collections.namedtuple('Flag','mask offset')
 class SD(Packet):
   MSGID_SRV_ID = 0xffff
   MSGID_SUB_ID = 0x1
@@ -232,6 +231,7 @@ class SD(Packet):
   MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
 
   # Flags definition: {"name":(mask,offset)}
+  _sdFlag = collections.namedtuple('Flag','mask offset')
   FLAGSDEF = {
     "REBOOT":_sdFlag(mask=0x80,offset=7),   # ReBoot flag
     "UNICAST":_sdFlag(mask=0x40,offset=6)   # UniCast flag
