@@ -5,6 +5,7 @@ import struct
 import binascii
 sys.path.append('.')
 
+from eth_scapy_someip import eth_scapy_someip as someip
 from eth_scapy_someip import eth_scapy_sd as sd
 
 class ut_sd(unittest.TestCase):
@@ -171,7 +172,7 @@ class ut_sd(unittest.TestCase):
     p_option = sd._SDOption()
     self.assertTrue(p_option.guess_payload_class(str(p)) == sd.SDOption_IP6_SD_EndPoint)
 
-  def test_0a_SD(self):
+  def test_0a_SD_Flags(self):
     p = sd.SD()
 
     p.setFlag("REBOOT",1)
@@ -182,3 +183,32 @@ class ut_sd(unittest.TestCase):
     self.assertTrue(p.flags == 0x40)
     p.setFlag("UNICAST",0)
     self.assertTrue(p.flags == 0x00)
+    
+    p.setFlag("REBOOT",1)
+    p.setFlag("UNICAST",1)
+    self.assertTrue(p.flags == 0xc0)
+
+  def test_0b_SD(self):
+    p = sd.SD()
+
+    # some Entries to array and size check
+    p.setEntryArray([sd.SDEntry_Service(),sd.SDEntry_EventGroup()])
+    self.assertTrue(struct.unpack("!L",str(p)[4:8])[0] == 32)
+    p.setEntryArray([])
+    self.assertTrue(struct.unpack("!L",str(p)[4:8])[0] == 0)
+
+    # some Options to array and size check
+    p.setOptionArray([sd.SDOption_IP4_EndPoint(),sd.SDOption_IP4_EndPoint()])
+    self.assertTrue(struct.unpack("!L",str(p)[8:12])[0] == 24)
+    p.setOptionArray([])
+    self.assertTrue(struct.unpack("!L",str(p)[8:12])[0] == 0)
+
+    # some Entries&Options to array and size check
+    p.setEntryArray([sd.SDEntry_Service(),sd.SDEntry_EventGroup()])
+    p.setOptionArray([sd.SDOption_IP4_EndPoint(),sd.SDOption_IP4_EndPoint()])
+    self.assertTrue(struct.unpack("!L",str(p)[4:8])[0] == 32)
+    self.assertTrue(struct.unpack("!L",str(p)[40:44])[0] == 24)
+
+
+
+

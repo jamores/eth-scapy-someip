@@ -33,7 +33,6 @@ class _SDPacketBase(Packet):
       Packet.init_fields(self)
       self._set_defaults()
 
-
 ## SD ENTRY
 ##  - Service
 ##  - EventGroup
@@ -168,6 +167,7 @@ class SDOption_Config(_SDOption):
     # offset to be added upon length calculation (corresponding to header's "Reserved" field)
     LEN_OFFSET    = 0x01
 
+    name = "Config Option"
     # default values specification
     _defaults = {'type':_SDOption.CFG_TYPE}
     # package fields definiton
@@ -184,6 +184,7 @@ class SDOption_Config(_SDOption):
       return(p+pay)            
 
 class SDOption_LoadBalance(_SDOption):
+    name = "LoadBalance Option"
     # default values specification
     _defaults = { 'type':_SDOption.LOADBALANCE_TYPE,
                   'len':_SDOption.LOADBALANCE_LEN}
@@ -195,41 +196,57 @@ class SDOption_LoadBalance(_SDOption):
 
 # SDOPTIONS : IPv4-specific 
 class SDOption_IP4_EndPoint(_SDOption_IP4):
+  name = "IP4 EndPoint Option"
   # default values specification
   _defaults = {'type':_SDOption.IP4_ENDPOINT_TYPE,'len':_SDOption.IP4_ENDPOINT_LEN}
 
 class SDOption_IP4_Multicast(_SDOption_IP4):
+  name = "IP4 Multicast Option"
   # default values specification
   _defaults = {'type':_SDOption.IP4_MCAST_TYPE,'len':_SDOption.IP4_MCAST_LEN}
 
 class SDOption_IP4_SD_EndPoint(_SDOption_IP4):
+  name = "IP4 SDEndPoint Option"
   # default values specification
   _defaults = {'type':_SDOption.IP4_SDENDPOINT_TYPE,'len':_SDOption.IP4_SDENDPOINT_LEN}
 
 # SDOPTIONS : IPv6-specific 
 class SDOption_IP6_EndPoint(_SDOption_IP6):
+  name = "IP6 EndPoint Option"
   # default values specification
   _defaults = {'type':_SDOption.IP6_ENDPOINT_TYPE,'len':_SDOption.IP6_ENDPOINT_LEN}
 
 class SDOption_IP6_Multicast(_SDOption_IP6):
+  name = "IP6 Multicast Option"
   # default values specification
   _defaults = {'type':_SDOption.IP6_MCAST_TYPE,'len':_SDOption.IP6_MCAST_LEN}
 
 class SDOption_IP6_SD_EndPoint(_SDOption_IP6):
+  name = "IP6 SDEndPoint Option"
   # default values specification
   _defaults = {'type':_SDOption.IP6_SDENDPOINT_TYPE,'len':_SDOption.IP6_SDENDPOINT_LEN}
 
 ##
 ## SD PACKAGE DEFINITION
 ##
-class SD(Packet):
+class SD(_SDPacketBase):
+  """ 
+  SD Packet
+
+  NOTE :   when adding 'entries' or 'options', do not use list.append() method but create a new list
+  e.g. :  p = SD()
+          p.option_array = [SDOption_Config(),SDOption_IP6_EndPoint()]
+  """
   MSGID_SRV_ID = 0xffff
   MSGID_SUB_ID = 0x1
   MSGID_EVT_ID = 0x100
+  MSGID = 0xffff8100
   PROTO_VER = 0x01
   IFACE_VER = 0x01
   MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
 
+  explicit = 1
+  name = "SD"
   # Flags definition: {"name":(mask,offset)}
   _sdFlag = collections.namedtuple('Flag','mask offset')
   FLAGSDEF = {
@@ -237,19 +254,18 @@ class SD(Packet):
     "UNICAST":_sdFlag(mask=0x40,offset=6)   # UniCast flag
     }
 
+  # default values specification
+  _defaults = {'msg_id':MSGID}
+
   name = "SD"
   fields_desc = [
     ByteField("flags",0),
     X3BytesField("res",0),
     FieldLenField("len_entry_array",None,length_of="entry_array",fmt="!I"),
-    PacketListField("entry_array",[],_SDEntry,length_from = lambda pkt:pkt.len_entry_array),
+    PacketListField("entry_array",None,cls=_SDEntry,length_from = lambda pkt:pkt.len_entry_array),
     FieldLenField("len_option_array",None,length_of="option_array",fmt="!I"),
-    PacketListField("option_array",[],_SDOption,length_from = lambda pkt:pkt.len_option_array)]
-
-  # NOTE : when adding 'entries' or 'options', do not use list.append() method but create a new list
-  # ej :  p = SD()
-  #       p.option_array = [SDOption_Config(),SDOption_IP6_EndPoint()]
-
+    PacketListField("option_array",None,cls=_SDOption,length_from = lambda pkt:pkt.len_option_array)]
+  
   def getFlag(self,name):
     """ get particular flag from bitfield."""
     name = name.upper()
@@ -267,3 +283,18 @@ class SD(Packet):
     if(name in self.FLAGSDEF):
         self.flags = (self.flags&(ctypes.c_ubyte(~self.FLAGSDEF[name].mask).value))|((value&0x01)<<self.FLAGSDEF[name].offset)
 
+  def setEntryArray(self,entry_list):
+    """ 
+    Add entries to entry_array.
+    :param entry_list: list of entries to be added. Single entry object also accepted
+    """
+    if(isinstance(entry_list,list)):self.entry_array = entry_list
+    else:self.entry_array = [entry_list]
+
+  def setOptionArray(self,option_list):    
+    """ 
+    Add options to option_array.
+    :param option_list: list of options to be added. Single option object also accepted
+    """
+    if(isinstance(option_list,list)):self.option_array = option_list
+    else:self.option_array = [option_list]
