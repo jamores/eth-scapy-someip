@@ -237,13 +237,10 @@ class SD(_SDPacketBase):
   e.g. :  p = SD()
           p.option_array = [SDOption_Config(),SDOption_IP6_EndPoint()]
   """
-  MSGID_SRV_ID = 0xffff
-  MSGID_SUB_ID = 0x1
-  MSGID_EVT_ID = 0x100
-  MSGID = 0xffff8100
-  PROTO_VER = 0x01
-  IFACE_VER = 0x01
-  MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
+  SOMEIP_MSGID = 0xffff8100
+  SOMEIP_PROTO_VER = 0x01
+  SOMEIP_IFACE_VER = 0x01
+  SOMEIP_MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
 
   explicit = 1
   name = "SD"
@@ -253,9 +250,6 @@ class SD(_SDPacketBase):
     "REBOOT":_sdFlag(mask=0x80,offset=7),   # ReBoot flag
     "UNICAST":_sdFlag(mask=0x40,offset=6)   # UniCast flag
     }
-
-  # default values specification
-  _defaults = {'msg_id':MSGID}
 
   name = "SD"
   fields_desc = [
@@ -298,3 +292,12 @@ class SD(_SDPacketBase):
     """
     if(isinstance(option_list,list)):self.option_array = option_list
     else:self.option_array = [option_list]
+
+  def getSomeipPacket(self):
+    p = SOMEIP(
+      msg_id=SD.SOMEIP_MSGID,
+      proto_ver = SD.SOMEIP_PROTO_VER,
+      iface_ver = SD.SOMEIP_IFACE_VER,
+      msg_type = SD.SOMEIP_MSG_TYPE
+      )
+    return(p)

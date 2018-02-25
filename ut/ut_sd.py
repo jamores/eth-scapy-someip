@@ -191,6 +191,9 @@ class ut_sd(unittest.TestCase):
   def test_0b_SD(self):
     p = sd.SD()
 
+    # length of package without entries nor options
+    self.assertTrue(len(binascii.hexlify(str(p)))/2 == 12)
+
     # some Entries to array and size check
     p.setEntryArray([sd.SDEntry_Service(),sd.SDEntry_EventGroup()])
     self.assertTrue(struct.unpack("!L",str(p)[4:8])[0] == 32)
