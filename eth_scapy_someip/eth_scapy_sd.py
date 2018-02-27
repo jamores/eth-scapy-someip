@@ -237,7 +237,9 @@ class SD(_SDPacketBase):
   e.g. :  p = SD()
           p.option_array = [SDOption_Config(),SDOption_IP6_EndPoint()]
   """
-  SOMEIP_MSGID = 0xffff8100
+  SOMEIP_MSGID_SRVID = 0xffff
+  SOMEIP_MSGID_SUBID = 0x1
+  SOMEIP_MSGID_EVENTID = 0x100
   SOMEIP_PROTO_VER = 0x01
   SOMEIP_IFACE_VER = 0x01
   SOMEIP_MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
@@ -293,11 +295,19 @@ class SD(_SDPacketBase):
     if(isinstance(option_list,list)):self.option_array = option_list
     else:self.option_array = [option_list]
 
-  def getSomeipPacket(self):
-    p = SOMEIP(
-      msg_id=SD.SOMEIP_MSGID,
-      proto_ver = SD.SOMEIP_PROTO_VER,
-      iface_ver = SD.SOMEIP_IFACE_VER,
-      msg_type = SD.SOMEIP_MSG_TYPE
-      )
+  def getSomeipPacket(self,stacked=False):
+    """ 
+    return SD-initialized SOME/IP packet
+    :param stacked: boolean. Either just SOME/IP packet or stacked over SD-self
+    """
+    p = SOMEIP()
+    p.msg_id.srv_id = SD.SOMEIP_MSGID_SRVID
+    p.msg_id.sub_id = SD.SOMEIP_MSGID_SUBID
+    p.msg_id.event_id = SD.SOMEIP_MSGID_EVENTID
+    p.proto_ver = SD.SOMEIP_PROTO_VER
+    p.iface_ver = SD.SOMEIP_IFACE_VER
+    p.msg_type = SD.SOMEIP_MSG_TYPE
+
     return(p)
+    if(stacked):return(p/self)
+    else:return(p)

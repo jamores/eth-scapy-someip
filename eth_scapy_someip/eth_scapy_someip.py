@@ -59,6 +59,8 @@ class SOMEIP(Packet):
   RET_E_WRONG_INTERFACE_V = 0x08
   RET_E_MALFORMED_MSG     = 0x09
   RET_E_WRONG_MESSAGE_TYPE= 0x0a
+  
+  _OVERALL_LEN_NOPAYLOAD  = 16 # UT
 
   explicit = 1
   name = "SOME/IP"

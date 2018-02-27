@@ -188,7 +188,19 @@ class ut_sd(unittest.TestCase):
     p.setFlag("UNICAST",1)
     self.assertTrue(p.flags == 0xc0)
 
-  def test_0b_SD(self):
+  def test_0b_SD_GetSomeipPacket(self):
+    p_sd = sd.SD()
+    
+    sd_len = binascii.hexlify(str(p_sd))
+
+    p_someip = p_sd.getSomeipPacket()
+    self.assertTrue(len(binascii.hexlify(str(p_someip)))/2, someip.SOMEIP._OVERALL_LEN_NOPAYLOAD)
+
+    p = p_sd.getSomeipPacket(stacked=True)
+    self.assertTrue(len(binascii.hexlify(str(p)))/2, someip.SOMEIP._OVERALL_LEN_NOPAYLOAD + 12)
+
+
+  def test_0c_SD(self):
     p = sd.SD()
 
     # length of package without entries nor options

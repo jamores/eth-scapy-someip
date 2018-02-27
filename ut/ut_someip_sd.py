@@ -19,7 +19,7 @@ class ut_someip_sd(unittest.TestCase):
     p_someip = p_sd.getSomeipPacket()
 
     # check SOME/IP-SD defaults
-    self.assertTrue(p_someip.msg_id == sd.SD.SOMEIP_MSGID)
+    self.assertTrue(binascii.hexlify(str(p_someip.msg_id)) == "ffff8100")
     self.assertTrue(p_someip.msg_type == someip.SOMEIP.TYPE_NOTIFICATION)
 
     # length of SOME/IP-SD without entries nor options
