@@ -2,3 +2,5 @@
 .coverage
 *.pyc
 *.swp
+htmlcov/
+reports/
