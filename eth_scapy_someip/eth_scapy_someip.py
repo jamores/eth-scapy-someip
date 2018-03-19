@@ -62,7 +62,6 @@ class SOMEIP(Packet):
   
   _OVERALL_LEN_NOPAYLOAD  = 16 # UT
 
-  explicit = 1
   name = "SOME/IP"
 
   fields_desc = [
@@ -106,5 +105,9 @@ class SOMEIP(Packet):
       p = p[:4]+struct.pack("!I",l)+p[8:]
     return p+pay
 
+
+for i in xrange(15):
+  bind_layers(UDP,SOMEIP,sport=30490+i)
+  bind_layers(TCP,SOMEIP,sport=30490+i)
 
 

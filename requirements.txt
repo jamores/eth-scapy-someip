@@ -1,4 +1,4 @@
-scapy==2.3.1
+scapy==2.3.2
 wheel==0.24.0
 junit-xml==1.8
 coverage

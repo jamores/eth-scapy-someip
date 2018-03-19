@@ -16,7 +16,7 @@ class ut_someip_sd(unittest.TestCase):
 
   def test_00_SOMEIPSD(self):
     p_sd = sd.SD()
-    p_someip = p_sd.getSomeipPacket()
+    p_someip = p_sd.getSomeip()
 
     # check SOME/IP-SD defaults
     self.assertTrue(binascii.hexlify(str(p_someip.msg_id)) == "ffff8100")

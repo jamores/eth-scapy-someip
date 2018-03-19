@@ -295,7 +295,7 @@ class SD(_SDPacketBase):
     if(isinstance(option_list,list)):self.option_array = option_list
     else:self.option_array = [option_list]
 
-  def getSomeipPacket(self,stacked=False):
+  def getSomeip(self,stacked=False):
     """ 
     return SD-initialized SOME/IP packet
     :param stacked: boolean. Either just SOME/IP packet or stacked over SD-self
@@ -308,6 +308,5 @@ class SD(_SDPacketBase):
     p.iface_ver = SD.SOMEIP_IFACE_VER
     p.msg_type = SD.SOMEIP_MSG_TYPE
 
-    return(p)
     if(stacked):return(p/self)
     else:return(p)

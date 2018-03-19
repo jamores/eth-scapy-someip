@@ -193,10 +193,10 @@ class ut_sd(unittest.TestCase):
     
     sd_len = binascii.hexlify(str(p_sd))
 
-    p_someip = p_sd.getSomeipPacket()
+    p_someip = p_sd.getSomeip()
     self.assertTrue(len(binascii.hexlify(str(p_someip)))/2, someip.SOMEIP._OVERALL_LEN_NOPAYLOAD)
 
-    p = p_sd.getSomeipPacket(stacked=True)
+    p = p_sd.getSomeip(stacked=True)
     self.assertTrue(len(binascii.hexlify(str(p)))/2, someip.SOMEIP._OVERALL_LEN_NOPAYLOAD + 12)
 
 

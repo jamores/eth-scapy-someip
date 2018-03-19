@@ -32,6 +32,9 @@ $sudo ifup eth1.1
 $sudo ifup eth2.1
 ```
 
-## 3. References
+## 3. Examples
+This folder contains an examples collection, build upon unittest package just for convenience. Just fire Wireshark and enjoy analyzing generated traffic.
+
+## 4. References
 - https://www.autosar.org
 - http://www.secdev.org/projects/scapy/
