@@ -33,7 +33,7 @@ $sudo ifup eth2.10
 ```
 
 ## 3. Examples
-This folder contains a (hopefully wrowing) examples collection, build upon unittest package just for convenience. Just fire Wireshark and enjoy analyzing generated traffic.
+This folder contains a (hopefully growing) examples collection, build upon unittest package just for convenience. Just fire Wireshark up and enjoy analyzing generated traffic.
 
 ## 4. References
 - https://www.autosar.org
