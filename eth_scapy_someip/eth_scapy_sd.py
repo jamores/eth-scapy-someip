@@ -122,7 +122,6 @@ class _SDOption(_SDPacketBase):
 
   def guess_payload_class(self,payload):
     """ decode SDOption depending on its type."""
-    # TODO : initial implementation, to be reviewed for multiple options
     pl_type = struct.unpack(">B",payload[2])[0]
     
     if(pl_type == _SDOption.CFG_TYPE):

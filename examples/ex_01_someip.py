@@ -16,8 +16,7 @@ class ex_01_someip(unittest.TestCase):
     pass
 
   def _test_00(self):
-    """ 
-    SOME/IP magic cookie (client >> server). TR_SOMEIP_00159."""
+    """ SOME/IP magic cookie (client >> server). TR_SOMEIP_00159."""
     # build SOME/IP packet
     sip = someip.SOMEIP()
     sip.msg_id.srv_id = 0xffff
@@ -36,7 +35,7 @@ class ex_01_someip(unittest.TestCase):
     sendp(p,iface=ETH_IFACE_B.name)
 
   def test_01(self):
-    """ SOME/IP-SD : Example for a serialization protocol, 6.7.3.7 Example of SOME/IP-SD PDU"""
+    """ SOME/IP-SD : Example for a serialization protocol, 6.7.3.7 Example of SOME/IP-SD PDU."""
     # build SOME/IP-SD packet
     sdp = sd.SD()
 
