@@ -4,7 +4,7 @@ from scapy.all import *
 from scapy.layers.inet6 import IP6Field
 import ctypes
 import collections
-from eth_scapy_someip import SOMEIP
+from eth_scapy_someip.eth_scapy_someip import SOMEIP
 
 class _SDPacketBase(Packet):
   """ base class to be used among all SD Packet definitions."""
@@ -48,9 +48,16 @@ class _SDEntry(_SDPacketBase):
   TYPE_EVTGRP_SUBSCRIBE       = 0x06
   TYPE_EVTGRP_SUBSCRIBE_ACK   = 0x07
   TYPE_EVTGRP = (TYPE_EVTGRP_SUBSCRIBE,TYPE_EVTGRP_SUBSCRIBE_ACK)
-  # overall len (UT usage)
-  OVERALL_LEN = 16
 
+  def check_SDEntry_type(pkg, lst, cur, remain):
+    """ decode SDEntry depending on its type."""
+    pl_type = struct.unpack(_SDEntry.TYPE_FMT,remain[_SDEntry.TYPE_PAYLOAD_I:_SDEntry.TYPE_PAYLOAD_I+1])[0]
+    if(pl_type in _SDEntry.TYPE_SRV):
+      return(SDEntry_Service)
+    elif(pl_type in _SDEntry.TYPE_EVTGRP):
+      return(SDEntry_EventGroup)
+    
+class SDEntry_Base(_SDEntry):
   fields_desc = [ 
     ByteField("type",0),
     ByteField("index_1",0),
@@ -62,29 +69,25 @@ class _SDEntry(_SDPacketBase):
     ByteField("major_ver",0),
     X3BytesField("ttl",0)]
 
-  def guess_payload_class(self,payload):
-    """ decode SDEntry depending on its type."""
-    pl_type = struct.unpack(_SDEntry.TYPE_FMT,payload[_SDEntry.TYPE_PAYLOAD_I])[0]
-    if(pl_type in _SDEntry.TYPE_SRV):
-      return(SDEntry_Service)
-    elif(pl_type in _SDEntry.TYPE_EVTGRP):
-      return(SDEntry_EventGroup)
+  def extract_padding(saelf,s):
+    return "",s
 
-class SDEntry_Service(_SDEntry):
+class SDEntry_Service(SDEntry_Base):
   """ Service Entry."""
   _defaults = {"type":_SDEntry.TYPE_SRV_FINDSERVICE}
 
   name = "Service Entry"
   fields_desc = [ 
-    _SDEntry,
+    SDEntry_Base,
     IntField("minor_ver",0)]
-class SDEntry_EventGroup(_SDEntry):
+
+class SDEntry_EventGroup(SDEntry_Base):
   """ EventGroup Entry."""
   _defaults = {"type":_SDEntry.TYPE_EVTGRP_SUBSCRIBE}
 
   name = "Eventgroup Entry"
   fields_desc = [ 
-    _SDEntry,
+    SDEntry_Base,
     BitField("res",0,12),
     BitField("cnt",0,4),
     ShortField("eventgroup_id",0)]
@@ -122,7 +125,7 @@ class _SDOption(_SDPacketBase):
 
   def guess_payload_class(self,payload):
     """ decode SDOption depending on its type."""
-    pl_type = struct.unpack(">B",payload[2])[0]
+    pl_type = struct.unpack(">B",payload[2:3])[0]
     
     if(pl_type == _SDOption.CFG_TYPE):
       return(SDOption_Config)
@@ -243,7 +246,6 @@ class SD(_SDPacketBase):
   SOMEIP_IFACE_VER = 0x01
   SOMEIP_MSG_TYPE = SOMEIP.TYPE_NOTIFICATION
 
-  explicit = 1
   name = "SD"
   # Flags definition: {"name":(mask,offset)}
   _sdFlag = collections.namedtuple('Flag','mask offset')
@@ -257,7 +259,7 @@ class SD(_SDPacketBase):
     ByteField("flags",0),
     X3BytesField("res",0),
     FieldLenField("len_entry_array",None,length_of="entry_array",fmt="!I"),
-    PacketListField("entry_array",None,cls=_SDEntry,length_from = lambda pkt:pkt.len_entry_array),
+    PacketListField("entry_array",None,next_cls_cb=_SDEntry.check_SDEntry_type,length_from = lambda pkt:pkt.len_entry_array),
     FieldLenField("len_option_array",None,length_of="option_array",fmt="!I"),
     PacketListField("option_array",None,cls=_SDOption,length_from = lambda pkt:pkt.len_option_array)]
   
