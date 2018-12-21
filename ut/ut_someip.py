@@ -57,20 +57,21 @@ class ut_someip(unittest.TestCase):
 
   def test_02_SOMEIP(self):
     """ test SOMEIP packet : overall, payload and length."""
-    p = someip.SOMEIP()
+    someip_p = someip.SOMEIP()
 
     # overall package (with default values)
-    pstr = binascii.hexlify(str(p))
+    pstr = binascii.hexlify(str(someip_p))
     binstr = "00"*4+"00"*3+"08"+"00"*4+"01010000"
     self.assertTrue(pstr == binstr)
 
     # add payload and check length
-    p.payload = binascii.unhexlify("DEADBEEF")
+    p = someip_p / binascii.unhexlify("DEADBEEF")
     pstr = binascii.hexlify(str(p))
     binstr = "00"*4+"00"*3+"0c"+"00"*4+"01010000"+"deadbeef"
     self.assertTrue(pstr == binstr)
+
     # empty payload, recheck dynamic length calculation
-    p.payload = None
+    p.remove_payload()
     pstr = binascii.hexlify(str(p))
     binstr = "00"*4+"00"*3+"08"+"00"*4+"01010000"
     self.assertTrue(pstr == binstr)
