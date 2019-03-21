@@ -5,7 +5,7 @@ from scapy.config import conf
 from scapy.layers.inet6 import IP6Field
 import ctypes
 import collections
-from eth_scapy_someip.eth_scapy_someip import SOMEIP
+from .eth_scapy_someip import SOMEIP
 
 # enable to debug dissectors
 #conf.debug_dissector = 1

@@ -1,5 +1,5 @@
-from eth_scapy_someip.eth_scapy_someip import SOMEIP, _SOMEIP_MessageId
-from eth_scapy_someip.eth_scapy_sd import SD
+from .eth_scapy_someip import SOMEIP, _SOMEIP_MessageId
+from .eth_scapy_sd import SD
 
 from scapy.packet import bind_layers
 
