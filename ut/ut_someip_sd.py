@@ -1,29 +1,34 @@
-import binascii
-import struct
+import unittest
 import sys
-import os
-import pytest
+import ctypes
+import struct
+import binascii
+sys.path.append('.')
 
 from eth_scapy_someip import eth_scapy_someip as someip
 from eth_scapy_someip import eth_scapy_sd as sd
 
-HERE = os.path.dirname(os.path.realpath(__file__))
+class ut_someip_sd(unittest.TestCase):
+  def setUp(self):
+    pass
+  def tearDown(self):
+    pass
 
-def test_00_SOMEIPSD():
+  def test_00_SOMEIPSD(self):
     p_sd = sd.SD()
     p_someip = p_sd.getSomeip()
 
     # check SOME/IP-SD defaults
-    assert(binascii.hexlify(str(p_someip.msg_id)) == "ffff8100")
-    assert(p_someip.msg_type == someip.SOMEIP.TYPE_NOTIFICATION)
+    self.assertTrue(binascii.hexlify(str(p_someip.msg_id)) == "ffff8100")
+    self.assertTrue(p_someip.msg_type == someip.SOMEIP.TYPE_NOTIFICATION)
 
     # length of SOME/IP-SD without entries nor options
     p = p_someip/p_sd
-    assert(struct.unpack("!L",str(p)[4:8])[0] == 20)
+    self.assertTrue(struct.unpack("!L",str(p)[4:8])[0] == 20)
 
     # check SOME/IP-SD lengths (note : lengths calculated on package construction)
     del(p)
     p_sd.setEntryArray([sd.SDEntry_Service()])
     p_sd.setOptionArray([sd.SDOption_IP4_EndPoint()])
     p = p_someip/p_sd
-    assert(struct.unpack("!L",str(p)[4:8])[0] == 48)
+    self.assertTrue(struct.unpack("!L",str(p)[4:8])[0] == 48)
