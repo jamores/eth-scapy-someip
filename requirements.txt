@@ -1,3 +1,5 @@
+pytest
+pytest-cov
 scapy==2.4.0
 wheel==0.24.0
 junit-xml==1.8
