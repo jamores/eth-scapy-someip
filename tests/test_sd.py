@@ -172,16 +172,25 @@ def test_0a_SD_Flags():
 
     p.setFlag("REBOOT",1)
     assert(p.flags == 0x80)
+    assert(p.getFlag("REBOOT") == 1)
     p.setFlag("REBOOT",0)
     assert(p.flags == 0x00)
+    assert(p.getFlag("REBOOT") == 0)
     p.setFlag("UNICAST",1)
     assert(p.flags == 0x40)
+    assert(p.getFlag("UNICAST") == 1)
     p.setFlag("UNICAST",0)
     assert(p.flags == 0x00)
+    assert(p.getFlag("UNICAST") == 0)
     
     p.setFlag("REBOOT",1)
     p.setFlag("UNICAST",1)
     assert(p.flags == 0xc0)
+    assert(p.getFlag("REBOOT") == 1)
+    assert(p.getFlag("UNICAST") == 1)
+
+    # non-existing Flag
+    assert(p.getFlag('NON_EXISTING_FLAG') == None)
 
 def test_0b_SD_GetSomeipPacket():
     p_sd = sd.SD()
@@ -204,12 +213,19 @@ def test_0c_SD():
     # some Entries to array and size check
     p.setEntryArray([sd.SDEntry_Service(),sd.SDEntry_EventGroup()])
     assert(struct.unpack("!L",str(p)[4:8])[0] == 32)
+    p.setEntryArray(sd.SDEntry_Service())
+    assert(isinstance(p.entry_array,list))
+    assert(len(p.entry_array) == 1)
     p.setEntryArray([])
     assert(struct.unpack("!L",str(p)[4:8])[0] == 0)
+    
 
     # some Options to array and size check
     p.setOptionArray([sd.SDOption_IP4_EndPoint(),sd.SDOption_IP4_EndPoint()])
     assert(struct.unpack("!L",str(p)[8:12])[0] == 24)
+    p.setOptionArray(sd.SDOption_IP4_EndPoint())
+    assert(isinstance(p.option_array,list))
+    assert(len(p.option_array) == 1)
     p.setOptionArray([])
     assert(struct.unpack("!L",str(p)[8:12])[0] == 0)
 
@@ -218,3 +234,9 @@ def test_0c_SD():
     p.setOptionArray([sd.SDOption_IP4_EndPoint(),sd.SDOption_IP4_EndPoint()])
     assert(struct.unpack("!L",str(p)[4:8])[0] == 32)
     assert(struct.unpack("!L",str(p)[40:44])[0] == 24)
+
+class _SDOption_IP4_EndPoint_defaults(sd._SDOption_IP4):
+    name = "IP4 Endpoint Option (UT)"
+    _defaults = {'non_existing_key':'does_not_matter_value'}
+def test_0d_defaults():
+    p = _SDOption_IP4_EndPoint_defaults()
