@@ -213,9 +213,11 @@ def test_0c_SD():
     # some Entries to array and size check
     p.setEntryArray([sd.SDEntry_Service(),sd.SDEntry_EventGroup()])
     assert(struct.unpack("!L",str(p)[4:8])[0] == 32)
+    # make sure individual entry added as list
     p.setEntryArray(sd.SDEntry_Service())
     assert(isinstance(p.entry_array,list))
     assert(len(p.entry_array) == 1)
+    # empty entry array
     p.setEntryArray([])
     assert(struct.unpack("!L",str(p)[4:8])[0] == 0)
     
@@ -223,9 +225,11 @@ def test_0c_SD():
     # some Options to array and size check
     p.setOptionArray([sd.SDOption_IP4_EndPoint(),sd.SDOption_IP4_EndPoint()])
     assert(struct.unpack("!L",str(p)[8:12])[0] == 24)
+    # make sure individual option added as list
     p.setOptionArray(sd.SDOption_IP4_EndPoint())
     assert(isinstance(p.option_array,list))
     assert(len(p.option_array) == 1)
+    # empty option array
     p.setOptionArray([])
     assert(struct.unpack("!L",str(p)[8:12])[0] == 0)
 
