@@ -136,6 +136,6 @@ class SOMEIP(Packet):
         return p + pay
 
 
-for i in xrange(15):
+for i in range(15):
     bind_layers(UDP, SOMEIP, sport=30490 + i)
     bind_layers(TCP, SOMEIP, sport=30490 + i)
