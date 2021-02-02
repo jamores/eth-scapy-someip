@@ -7,8 +7,8 @@ from eth_scapy_someip import eth_scapy_someip as someip
 from eth_scapy_someip import eth_scapy_sd as sd
 
 iface = namedtuple('iface','name ip port')
-ETH_IFACE_A = iface(name='eth1.10', ip='192.168.10.1', port=30490)
-ETH_IFACE_B = iface(name='eth2.10', ip='192.168.10.2', port=30490)
+ETH_IFACE_A = iface(name='eth1.10', ip='192.168.10.2', port=30490)
+ETH_IFACE_B = iface(name='eth2.10', ip='192.168.10.3', port=30490)
 
 class ex_02_sd(unittest.TestCase):
   def setUp(self):

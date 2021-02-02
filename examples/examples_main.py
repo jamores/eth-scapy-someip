@@ -6,8 +6,8 @@ from ex_02_sd import ex_02_sd
 
 def suite():
   suite = unittest.TestSuite()
-  suite.addTest(unittest.makeSuite(ex_00_basics))
-  suite.addTest(unittest.makeSuite(ex_01_someip))
+  #suite.addTest(unittest.makeSuite(ex_00_basics))
+  #suite.addTest(unittest.makeSuite(ex_01_someip))
   suite.addTest(unittest.makeSuite(ex_02_sd))
   return suite
 
