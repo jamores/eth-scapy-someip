@@ -15,13 +15,13 @@ class ex_01_someip(unittest.TestCase):
   def tearDown(self):
     pass
 
-  def _test_00(self):
+  def test_00(self):
     """ SOME/IP magic cookie (client >> server). TR_SOMEIP_00159."""
     # build SOME/IP packet
     sip = someip.SOMEIP()
     sip.msg_id.srv_id = 0xffff
     sip.msg_id.sub_id = 0x0
-    sip.msg_id.mtd_id = 0x0000
+    sip.msg_id.method_id = 0x0000
 
     sip.req_id.client_id = 0xdead
     sip.req_id.session_id = 0xbeef
