@@ -4,7 +4,7 @@ from scapy.all import *
 from scapy.layers.inet6 import IP6Field
 import ctypes
 import collections
-from eth_scapy_someip import SOMEIP
+from .eth_scapy_someip import SOMEIP
 
 
 class _SDPacketBase(Packet):
@@ -66,7 +66,7 @@ class _SDEntry(_SDPacketBase):
 
     def guess_payload_class(self, payload):
         """ decode SDEntry depending on its type."""
-        pl_type = struct.unpack(_SDEntry.TYPE_FMT, payload[_SDEntry.TYPE_PAYLOAD_I])[0]
+        pl_type = struct.unpack(_SDEntry.TYPE_FMT, payload[_SDEntry.TYPE_PAYLOAD_I:_SDEntry.TYPE_PAYLOAD_I+1])[0]
         if pl_type in _SDEntry.TYPE_SRV:
             return SDEntry_Service
         elif pl_type in _SDEntry.TYPE_EVTGRP:
@@ -106,6 +106,9 @@ class SDEntry_EventGroup(_SDEntry):
 #  - IPv6 EndPoint
 class _SDOption(_SDPacketBase):
     """ Base class for SDOption_* packages."""
+    TYPE_FMT = ">B"
+    TYPE_PAYLOAD_I = 2
+
     CFG_TYPE = 0x01
     CFG_OVERALL_LEN = 4       # overall length of CFG SDOption,empty 'cfg_str' (to be used from UT)
     LOADBALANCE_TYPE = 0x02
@@ -128,7 +131,7 @@ class _SDOption(_SDPacketBase):
 
     def guess_payload_class(self, payload):
         """ decode SDOption depending on its type."""
-        pl_type = struct.unpack(">B", payload[2])[0]
+        pl_type = struct.unpack(_SDOption.TYPE_FMT, payload[_SDOption.TYPE_PAYLOAD_I:_SDOption.TYPE_PAYLOAD_I+1])[0]
 
         if pl_type == _SDOption.CFG_TYPE:
             return SDOption_Config
