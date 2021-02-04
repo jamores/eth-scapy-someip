@@ -1,0 +1,7 @@
+pytest
+pytest-cov
+scapy>=2.4.1
+wheel==0.24.0
+junit-xml==1.8
+coverage
+html-testRunner==1.1.2
