@@ -12,25 +12,17 @@ Test automation, traffic generation, ECU development support or just **_for fun_
 In order to configure VLAN (IEEE 802.1q) tagging in your linux machine, Ubuntu's wiki is a good reference : https://wiki.ubuntu.com/vlan.
 
 ### 2.1 Interface configuration (Linux)
-During our testing, we simply used to USB-Ethernet adaptors with the following _/etc/network/interfaces_ configuration, although multi-NIC is not strictly required to fiddle with SOME/IP-SD.
-```
-# VLAN eth1
-auto eth1.10
-iface eth1.1 inet static
-  address 192.168.10.1
-  netmask 255.255.255.0
+Feel free to choose your preferred network topology in order to start fiddling with SOME/IP-SD. In our case, we opted for a couple of USB-Ethernet adaptors but that's not strictly necessary.
 
-# VLAN eth2
-auto eth2.10
-iface eth2.1 inet static
-  address 192.168.10.2
-  netmask 255.255.255.0
-```
-In order to bring them to life:
-```
-$sudo ifup eth1.10
-$sudo ifup eth2.10
-```
+Just keep in mind that these conventions are used from the _example collection_:
+- ETH_IFACE_A (normally acting as _sender_)
+  - iface name : eth1.10
+  - iface addr : 192.168.10.2
+  - iface port : 30490
+- ETH_IFACE_B (normally acting as _receiver_)
+  - iface name : eth2.10
+  - iface addr : 192.168.10.3
+  - iface port : 30490
 
 ## 3. Examples
 This folder contains a (hopefully growing) examples collection, build upon unittest package just for convenience. Just fire Wireshark up and enjoy analyzing generated traffic.

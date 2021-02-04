@@ -1,4 +1,6 @@
-scapy==2.4.0
+pytest
+pytest-cov
+scapy>=2.4.1
 wheel==0.24.0
 junit-xml==1.8
 coverage
