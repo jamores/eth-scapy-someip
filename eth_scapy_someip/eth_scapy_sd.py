@@ -279,10 +279,10 @@ class SD(_SDPacketBase):
     fields_desc = [
         ByteField("flags", 0),
         X3BytesField("res", 0),
-        FieldLenField("len_entry_array", None, length_of="entry_array", fmt="!I"),
-        PacketListField("entry_array", None, cls=_SDEntry, length_from=lambda pkt:pkt.len_entry_array),
-        FieldLenField("len_option_array", None, length_of="option_array", fmt="!I"),
-        PacketListField("option_array", None, cls=_SDOption, length_from=lambda pkt:pkt.len_option_array)]
+        FieldLenField(name="len_entry_array", default=None, length_of="entry_array", fmt="!I"),
+        PacketListField(name="entry_array", default=None, pkt_cls=_SDEntry, length_from=lambda pkt:pkt.len_entry_array),
+        FieldLenField(name="len_option_array", default=None, length_of="option_array", fmt="!I"),
+        PacketListField(name="option_array", default=None, pkt_cls=_SDOption, length_from=lambda pkt:pkt.len_option_array)]
 
     def __init__(self, *args, **kwargs):
         super(SD, self).__init__(*args, **kwargs)
