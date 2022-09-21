@@ -1,0 +1,23 @@
+name: Run Unit Tests
+
+on: [push, pull_request]
+
+jobs:
+  buildtest:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v1
+        with:
+          python-version: 3.9.13
+
+      - name: Install dependencies
+        run: |
+          pip install scapy
+          pip install pytest
+
+      - name: Run unit test
+        run: |
+          pytest -v
